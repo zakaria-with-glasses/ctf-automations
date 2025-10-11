@@ -58,6 +58,14 @@ ping(){
     ping  $1
 }
 
+enumerate_dir(){
+    if(($1 == "dir"))
+        then info "Scanning Domain ${$2}..."
+        gobuster dir -u=$2 -w=./wordlists/directory-list-1.0.txt -o=./output/enumerate-$2.txt
+    elif(($1 == "sub"))
+        then info "Scanning Subdomains of ${$2}..."
+        gobuster dns -d=$2 -w=./wordlists/subdomain_medium.txt -o=./output/subdomain-$2.txt
+}
 
 echo "argument number: $#"
 
@@ -75,9 +83,14 @@ if (( $# < 1)) then
     exit 1
 fi
 
+
 case "$1" in
     scan)
         scan $2 $3 # i should provide them in this order: outputfile ip/hostname
+        ;;
+    
+    enum)
+        enumerate_dir $2 $3
         ;;
 
     *)
